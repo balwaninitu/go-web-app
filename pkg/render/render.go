@@ -3,6 +3,7 @@ package render
 import (
 	"bytes"
 	"fmt"
+	"go-web-app/pkg/config"
 	"log"
 	"net/http"
 	"path/filepath"
@@ -12,18 +13,23 @@ import (
 //go allows to create functions and pass those to templates
 var functions = template.FuncMap{}
 
+var app *config.AppConfig
+
+//sets the new config for the template pkg
+func NewTemplate(a *config.AppConfig) {
+	app = a
+}
+
 func RenderTemplate(w http.ResponseWriter, html string) {
-	//call function template map cache
-	tc, err := CreateTemplateCache()
-	if err != nil {
-		log.Fatal(err)
-	}
+	//set configuration so that once have template set. no need to load again
+	//untill application restarts
+	tc := app.TemplateCache
 
 	//check if template parse, call value out of map
 
 	t, ok := tc[html]
 	if !ok {
-		log.Fatal(err)
+		log.Fatal("could not get template from template cache")
 	}
 	//if template ok, read template and parse, for that create bytes buffer
 	//buf will hold information of bytes
@@ -34,7 +40,7 @@ func RenderTemplate(w http.ResponseWriter, html string) {
 	_ = t.Execute(buf, nil)
 
 	//write to response writer, it return byte and err
-	_, err = buf.WriteTo(w)
+	_, err := buf.WriteTo(w)
 	if err != nil {
 		fmt.Println("Error writing template to browswer", err)
 	}

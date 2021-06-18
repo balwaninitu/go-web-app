@@ -1,6 +1,9 @@
 package config
 
-import "text/template"
+import (
+	"log"
+	"text/template"
+)
 
 /*set configuration so that once have template set. no need to load again
 untill application restarts
@@ -10,5 +13,7 @@ from application it will help to avoid import cycle*/
 //holds the application config
 //any kind of config can add to struct that need for application
 type AppConfig struct {
+	UseCache      bool
 	TemplateCache map[string]*template.Template
+	InfoLog       *log.Logger
 }

@@ -15,7 +15,6 @@ const portNumber = ":8080"
 func main() {
 
 	//create variable for config pkg
-
 	var app config.AppConfig
 
 	tc, err := render.CreateTemplateCache()
@@ -23,6 +22,8 @@ func main() {
 		log.Fatal("cannot create template cache")
 	}
 	app.TemplateCache = tc
+	//provide access to app config
+	render.NewTemplate(&app)
 
 	http.HandleFunc("/", handlers.Home)
 	http.HandleFunc("/about", handlers.About)
