@@ -1,7 +1,9 @@
 package render
 
 import (
+	"bytes"
 	"fmt"
+	"log"
 	"net/http"
 	"path/filepath"
 	"text/template"
@@ -11,21 +13,36 @@ import (
 var functions = template.FuncMap{}
 
 func RenderTemplate(w http.ResponseWriter, html string) {
-
-	_, err := RenderTemplateTest(w)
+	//call function template map cache
+	tc, err := CreateTemplateCache()
 	if err != nil {
-		fmt.Println("Error getting in template cache", err)
+		log.Fatal(err)
 	}
 
-	parsedTemplate, _ := template.ParseFiles("./templates/" + html)
-	err = parsedTemplate.Execute(w, nil)
-	if err != nil {
-		fmt.Println("cannot parsed templates", err)
-		return
+	//check if template parse, call value out of map
+
+	t, ok := tc[html]
+	if !ok {
+		log.Fatal(err)
 	}
+	//if template ok, read template and parse, for that create bytes buffer
+	//buf will hold information of bytes
+	buf := new(bytes.Buffer)
+
+	//put template available in memory in bytes
+	//store template in buf variable
+	_ = t.Execute(buf, nil)
+
+	//write to response writer, it return byte and err
+	_, err = buf.WriteTo(w)
+	if err != nil {
+		fmt.Println("Error writing template to browswer", err)
+	}
+
 }
 
-func RenderTemplateTest(w http.ResponseWriter) (map[string]*template.Template, error) {
+//create template map cache
+func CreateTemplateCache() (map[string]*template.Template, error) {
 	//create map var myCache which will hold the all template
 	//mycache will return template with page i.e. home and about which are fully parsed
 	//mycache is only inside func scope so add it in return value
