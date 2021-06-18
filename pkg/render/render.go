@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"go-web-app/pkg/config"
+	"go-web-app/pkg/handlers"
 	"log"
 	"net/http"
 	"path/filepath"
@@ -20,7 +21,7 @@ func NewTemplate(a *config.AppConfig) {
 	app = a
 }
 
-func RenderTemplate(w http.ResponseWriter, html string) {
+func RenderTemplate(w http.ResponseWriter, html string, td *handlers.TemplateData) {
 
 	var tc map[string]*template.Template
 	//if use cache is true read info from template cache else cretae template
