@@ -12,6 +12,9 @@ from application it will help to avoid import cycle*/
 
 //holds the application config
 //any kind of config can add to struct that need for application
+
+/*use cache will help to add any newly add comment in html (about)template while
+application is still running i.e during development phase*/
 type AppConfig struct {
 	UseCache      bool
 	TemplateCache map[string]*template.Template

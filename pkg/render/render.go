@@ -21,10 +21,16 @@ func NewTemplate(a *config.AppConfig) {
 }
 
 func RenderTemplate(w http.ResponseWriter, html string) {
-	//set configuration so that once have template set. no need to load again
-	//untill application restarts
-	tc := app.TemplateCache
 
+	var tc map[string]*template.Template
+	//if use cache is true read info from template cache else cretae template
+	if app.UseCache {
+		//set configuration so that once have template set. no need to load again
+		//untill application restarts
+		tc = app.TemplateCache
+	} else {
+		tc, _ = CreateTemplateCache()
+	}
 	//check if template parse, call value out of map
 
 	t, ok := tc[html]
