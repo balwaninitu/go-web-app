@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"go-web-app/pkg/config"
-	"go-web-app/pkg/handlers"
+	"go-web-app/pkg/models"
 	"log"
 	"net/http"
 	"path/filepath"
@@ -21,7 +21,12 @@ func NewTemplate(a *config.AppConfig) {
 	app = a
 }
 
-func RenderTemplate(w http.ResponseWriter, html string, td *handlers.TemplateData) {
+func AddDefaultData(td *models.TemplateData) *models.TemplateData {
+
+	return td
+}
+
+func RenderTemplate(w http.ResponseWriter, html string, td *models.TemplateData) {
 
 	var tc map[string]*template.Template
 	//if use cache is true read info from template cache else cretae template
@@ -42,9 +47,12 @@ func RenderTemplate(w http.ResponseWriter, html string, td *handlers.TemplateDat
 	//buf will hold information of bytes
 	buf := new(bytes.Buffer)
 
+	//when data need to add to all pages do below
+	td = AddDefaultData(td)
+
 	//put template available in memory in bytes
 	//store template in buf variable
-	_ = t.Execute(buf, nil)
+	_ = t.Execute(buf, td)
 
 	//write to response writer, it return byte and err
 	_, err := buf.WriteTo(w)

@@ -2,22 +2,11 @@ package handlers
 
 import (
 	"go-web-app/pkg/config"
+	"go-web-app/pkg/models"
 	"go-web-app/pkg/render"
 
 	"net/http"
 )
-
-//holds data sent from handlers to templates
-type TemplateData struct {
-	StringMap map[string]string
-	IntMap    map[string]int
-	FloatMap  map[string]float32
-	Data      map[string]interface{}
-	CSRFToken string
-	Flash     string
-	Warning   string
-	Error     string
-}
 
 //repository used by handlers
 var Repo *Repository
@@ -45,7 +34,7 @@ func NewHandlers(r *Repository) {
 
 //provide access of repository to all handlers by creating method
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "home.page.html", &TemplateData{})
+	render.RenderTemplate(w, "home.page.html", &models.TemplateData{})
 }
 
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
@@ -54,7 +43,7 @@ func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 	stringMap["test"] = "Hello, again."
 
 	//send data to template
-	render.RenderTemplate(w, "about.page.html", &TemplateData{
+	render.RenderTemplate(w, "about.page.html", &models.TemplateData{
 		StringMap: stringMap,
 	})
 
