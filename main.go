@@ -5,6 +5,7 @@ import (
 	"go-web-app/pkg/config"
 	"go-web-app/pkg/handlers"
 	"go-web-app/pkg/render"
+	"go-web-app/pkg/routes"
 	"log"
 
 	"net/http"
@@ -32,10 +33,13 @@ func main() {
 	//provide access to app config
 	render.NewTemplate(&app)
 
-	http.HandleFunc("/", handlers.Repo.Home)
-	http.HandleFunc("/about", handlers.Repo.About)
-
+	srv := &http.Server{
+		Addr:    portNumber,
+		Handler: routes.Routes(&app),
+	}
 	fmt.Printf("Starting Application on port %s\n", portNumber)
-	http.ListenAndServe(portNumber, nil)
+	//start actual server
+	err = srv.ListenAndServe()
+	log.Fatal(err)
 
 }
