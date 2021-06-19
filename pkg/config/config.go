@@ -3,6 +3,8 @@ package config
 import (
 	"log"
 	"text/template"
+
+	"github.com/alexedwards/scs"
 )
 
 /*set configuration so that once have template set. no need to load again
@@ -19,4 +21,6 @@ type AppConfig struct {
 	UseCache      bool
 	TemplateCache map[string]*template.Template
 	InfoLog       *log.Logger
+	InProduction  bool
+	Session       *scs.SessionManager
 }

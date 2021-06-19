@@ -1,4 +1,4 @@
-package routes
+package main
 
 import (
 	"go-web-app/pkg/config"
@@ -9,11 +9,12 @@ import (
 	"github.com/go-chi/chi/middleware"
 )
 
-func Routes(app *config.AppConfig) http.Handler {
+func routes(app *config.AppConfig) http.Handler {
 	mux := chi.NewRouter()
 	//recover from panic
 	mux.Use(middleware.Recoverer)
 	mux.Use(NoSurf)
+	mux.Use(SessionLoad)
 
 	mux.Get("/", handlers.Repo.Home)
 	mux.Get("/about", handlers.Repo.About)

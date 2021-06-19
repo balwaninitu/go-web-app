@@ -5,18 +5,36 @@ import (
 	"go-web-app/pkg/config"
 	"go-web-app/pkg/handlers"
 	"go-web-app/pkg/render"
-	"go-web-app/pkg/routes"
+
 	"log"
+	"time"
 
 	"net/http"
+
+	"github.com/alexedwards/scs"
 )
 
 const portNumber = ":8080"
 
+//create variable for config pkg
+var app config.AppConfig
+var session *scs.SessionManager
+
 func main() {
 
-	//create variable for config pkg
-	var app config.AppConfig
+	//change this to true when in production
+	app.InProduction = false
+
+	session = scs.New()
+	session.Lifetime = 24 * time.Hour
+
+	//default session package
+	//cookie will persist after browser closed
+	session.Cookie.Persist = true
+	session.Cookie.SameSite = http.SameSiteLaxMode
+	session.Cookie.Secure = app.InProduction
+
+	app.Session = session
 
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
@@ -35,7 +53,7 @@ func main() {
 
 	srv := &http.Server{
 		Addr:    portNumber,
-		Handler: routes.Routes(&app),
+		Handler: routes(&app),
 	}
 	fmt.Printf("Starting Application on port %s\n", portNumber)
 	//start actual server
